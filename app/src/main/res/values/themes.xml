@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme for your app, inheriting from a Material 3 DayNight theme.
+         This theme sets up the basic visual style and ensures compatibility with AppCompat
+         and Compose Material 3 components.
+         "NoActionBar" is chosen because we explicitly hide the ActionBar in MainActivity,
+         allowing our custom Compose toolbar to float. -->
+    <style name="Theme.Notey" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here.
+             You can define primary, secondary, tertiary colors, etc.
+             For example:
+             <item name="colorPrimary">@color/your_primary_color</item>
+             <item name="colorSecondary">@color/your_secondary_color</item>
+        -->
+        <!-- Example: You might define custom colors in res/values/colors.xml and reference them here. -->
+    </style>
+
+    <!-- If you need a separate dark theme, you would define it here, e.g.:
+    <style name="Theme.Notey.Dark" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/dark_primary</item>
+    </style>
+    -->
+</resources>
