@@ -143,13 +143,6 @@ fun WhiteboardScreen() {
     }
 }
 
-// ... (Toolbar, ToolButton, ColorOption, ThicknessOption, PreviewToolbar functions remain the same)
-// All other helper composables (Toolbar, ToolButton, ColorOption, ThicknessOption)
-// and their previews should be placed below the WhiteboardScreen function
-// as they are helper functions.
-// Ensure your Toolbar, ToolButton, ColorOption, ThicknessOption, PreviewToolbar
-// are defined here as they are helpers to WhiteboardScreen.
-
 /**
  * Composable function for the drawing application toolbar.
  * Replicates the layout and styling from the provided UI sample.

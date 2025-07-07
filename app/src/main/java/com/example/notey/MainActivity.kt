@@ -1,5 +1,6 @@
 package com.example.notey
 
+import App
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -29,7 +30,8 @@ class MainActivity : AppCompatActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     // Directly call the WhiteboardScreen Composable
-                    WhiteboardScreen()
+                    App()
+                    //WhiteboardScreen()
                 }
             }
         }

@@ -69,6 +69,12 @@ dependencies {
     implementation("androidx.compose.material:material-icons-core")
     implementation("androidx.compose.material:material-icons-extended")
 
+    implementation("sh.calvin.reorderable:reorderable:2.1.1")
+    implementation("androidx.compose.material3:material3-window-size-class:<latest-version>")
+
+    implementation("androidx.compose.material3:material3-window-size-class")
+    implementation("androidx.compose.material3:material3-window-size-class:<latest-version>")
+
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
 
