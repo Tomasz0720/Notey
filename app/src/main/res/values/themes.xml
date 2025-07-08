@@ -6,6 +6,8 @@
          "NoActionBar" is chosen because we explicitly hide the ActionBar in MainActivity,
          allowing our custom Compose toolbar to float. -->
     <style name="Theme.Notey" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">#FFEDEDED</item>
+        <item name="android:windowLightStatusBar">true</item>
         <!-- Customize your light theme here.
              You can define primary, secondary, tertiary colors, etc.
              For example:

@@ -1,5 +1,7 @@
 import NavItem
 import com.example.notey.R
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -29,57 +31,75 @@ import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridS
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.painterResource
 import kotlin.random.Random
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
+import java.time.format.TextStyle
+import kotlin.text.compareTo
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.ui.platform.LocalDensity
 import kotlin.text.compareTo
 
 @Composable
-fun ResponsiveLayout(windowSizeClass: WindowSizeClass){
+fun ResponsiveLayout(windowSizeClass: WindowSizeClass) {
     var selectedTab by remember { mutableStateOf(0) }
 
     if (windowSizeClass.widthSizeClass >= WindowWidthSizeClass.Medium) {
         // Tablet/Desktop Layout
         Row(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.systemBars)
+                .padding(20.dp)
         ) {
             Sidebar(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(start = 20.dp, top = 50.dp, bottom = 50.dp),
+                    .fillMaxHeight(),
                 selectedIndex = selectedTab,
                 onItemSelected = { selectedTab = it }
             )
 
+            Spacer(modifier = Modifier.width(20.dp)) // Space between sidebar and content
+
             MainContent(
                 selectedTab = selectedTab,
+                sidebarWidth = 240.dp,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(20.dp)
+                    .fillMaxHeight()
             )
         }
     } else {
         // Phone Layout
         Scaffold(
+            modifier = Modifier.fillMaxSize(),
             bottomBar = {
                 BottomNavBar(
                     selectedIndex = selectedTab,
                     onItemSelected = { selectedTab = it }
                 )
             }
-        ) { padding ->
+        ) { scaffoldPadding ->
             MainContent(
                 selectedTab = selectedTab,
+                sidebarWidth = 0.dp,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
+                    .padding(scaffoldPadding)
+                    .windowInsetsPadding(WindowInsets.statusBars)
+                    .padding(20.dp)
             )
         }
     }
 }
-
 
 data class NavItem(val iconResId: Int, val label: String)
 val navItems = listOf(
@@ -101,59 +121,85 @@ fun Sidebar(
     val groupedIcons = navItems.subList(1, navItems.size - 1)
     val settingsIcon = navItems.last()
 
-    Column(
+    var collapsed by remember { mutableStateOf(false)}
+    val sidebarWidth by animateDpAsState(targetValue = if (collapsed) 80.dp else 240.dp)
+
+    Box(
         modifier = modifier
-            .width(200.dp)
+            .width(sidebarWidth)
             .clip(RoundedCornerShape(10.dp))
-            .background(Color(0xFFD9D9D9))
-            .padding(horizontal = 12.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.SpaceBetween
+            .background(Color(0xFFEDEDED))
     ) {
-        Column {
-            // Menu icon (top-left)
-            IconButton(
-                onClick = { onItemSelected(0) },
-                modifier = Modifier.padding(start = 8.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = menuIcon.iconResId),
-                    contentDescription = menuIcon.label,
-                    modifier = Modifier.size(35.dp),
-                    tint = Color.Black
-                )
-            }
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(horizontal = 20.dp, vertical = 20.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                // Top section (menu)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { collapsed = !collapsed }
+                ) {
+                    Icon(
+                        painter = painterResource(id = menuIcon.iconResId),
+                        contentDescription = menuIcon.label,
+                        modifier = Modifier.size(35.dp),
+                        tint = Color(0xFF2D2D2D)
+                    )
+                }
 
-            Spacer(modifier = Modifier.height(30.dp))
+                Spacer(modifier = Modifier.height(50.dp))
 
-            // Middle group of icons
-            Column(
-                verticalArrangement = Arrangement.spacedBy(30.dp),
-                modifier = Modifier.padding(start = 10.dp)
-            ) {
-                groupedIcons.forEachIndexed { index, item ->
-                    IconButton(onClick = { onItemSelected(index + 1) }) {
-                        Icon(
-                            painter = painterResource(id = item.iconResId),
-                            contentDescription = item.label,
-                            modifier = Modifier.size(35.dp),
-                            tint = if (selectedIndex == index + 1) Color.Blue else Color.Black
-                        )
+                // Middle group
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(30.dp),
+                ) {
+                    groupedIcons.forEachIndexed { index, item ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onItemSelected(index + 1) }
+                        ) {
+                            Icon(
+                                painter = painterResource(id = item.iconResId),
+                                contentDescription = item.label,
+                                modifier = Modifier.size(35.dp),
+                                tint = if (selectedIndex == index + 1) Color(0xFF777777) else Color(0xFF2D2D2D)
+                            )
+
+                            if (!collapsed) {
+                                Spacer(modifier = Modifier.width(20.dp))
+                                Text(
+                                    text = item.label,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = if (selectedIndex == index + 1) Color(0xFF777777) else Color(0xFF2D2D2D)
+                                )
+                            }
+                        }
                     }
                 }
             }
-        }
 
-        // Settings icon (bottom-left)
-        IconButton(
-            onClick = { onItemSelected(navItems.lastIndex) },
-            modifier = Modifier.padding(start = 8.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = settingsIcon.iconResId),
-                contentDescription = settingsIcon.label,
-                modifier = Modifier.size(35.dp),
-                tint = if (selectedIndex == navItems.lastIndex) Color.Blue else Color.Black
-            )
+            // Bottom section (settings)
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onItemSelected(navItems.lastIndex) }
+            ) {
+                Icon(
+                    painter = painterResource(id = settingsIcon.iconResId),
+                    contentDescription = settingsIcon.label,
+                    modifier = Modifier.size(35.dp),
+                    tint = if (selectedIndex == navItems.lastIndex) Color(0xFF777777) else Color(0xFF2D2D2D)
+                )
+            }
         }
     }
 }
@@ -161,35 +207,163 @@ fun Sidebar(
 @Composable
 fun BottomNavBar(onItemSelected: (Int) -> Unit, selectedIndex: Int) {
     NavigationBar {
-        navItems.forEachIndexed { index, item ->
+        navItems.subList(1, navItems.size).forEachIndexed { index, item ->
             NavigationBarItem(
                 icon = {
                     Icon(
+                        modifier = Modifier.size(25.dp),
                         painter = painterResource(id = item.iconResId),
-                        contentDescription = item.label,
-                        modifier = Modifier.size(24.dp)
+                        contentDescription = null
                     )
                 },
-                label = { Text(item.label) },
-                selected = selectedIndex == index,
-                onClick = { onItemSelected(index) }
+                label = {},
+                selected = selectedIndex == index + 1,
+                onClick = { onItemSelected(index + 1) }
             )
-
         }
     }
 }
 
 @Composable
-fun MainContent(selectedTab: Int, modifier: Modifier = Modifier) {
-    Box(
+fun MainContent(
+    selectedTab: Int,
+    sidebarWidth: Dp = 0.dp,
+    modifier: Modifier = Modifier
+) {
+    Column(
         modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = "Current Tab: ${navItems[selectedTab].label}")
+        Column(
+            verticalArrangement = Arrangement.spacedBy(30.dp)
+        ) {
+            Text(
+                text = "Welcome, User",
+                fontSize = 40.sp,
+                fontWeight = FontWeight.Medium,
+                color = Color(0xFF2D2D2D),
+            )
+
+            // Search bar
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp)
+                    .clip(RoundedCornerShape(25.dp))
+                    .background(Color(0xFFEDEDED))
+                    .padding(horizontal = 20.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.find),
+                        contentDescription = null,
+                        tint = Color(0xFF2D2D2D),
+                        modifier = Modifier.size(35.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(20.dp))
+
+                    var searchQuery by remember { mutableStateOf("") }
+                    BasicTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        singleLine = true,
+                        textStyle = androidx.compose.ui.text.TextStyle(
+                            color = Color(0xFF2D2D2D),
+                            fontSize = 18.sp,
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 12.dp),
+                        decorationBox = { innerTextField ->
+                            Box {
+                                if (searchQuery.isEmpty()) {
+                                    Text(
+                                        text = "Search Notes",
+                                        color = Color(0xFF2D2D2D),
+                                        fontSize = 18.sp,
+                                    )
+                                }
+                                innerTextField()
+                            }
+                        }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Center info
+            Text(
+                text = "Current Tab: ${navItems[selectedTab].label}",
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+        }
+
+        // Bottom Buttons - Right justified and properly positioned
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                Button(
+                    onClick = { /* Second button action */ },
+                    modifier = Modifier.size(64.dp),
+                    shape = RoundedCornerShape(15.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFEDEDED)
+                    ),
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.add),
+                        contentDescription = null,
+                        tint = Color(0xFF2D2D2D),
+                        modifier = Modifier.size(35.dp)
+                    )
+                }
+
+                Button(
+                    onClick = { /* First button action */ },
+                    modifier = Modifier
+                        .height(65.dp)
+                        .widthIn(min = 195.dp),
+                    shape = RoundedCornerShape(15.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFEDEDED)
+                    ),
+                    contentPadding = PaddingValues(horizontal = 16.dp)
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.scribble),
+                            contentDescription = null,
+                            tint = Color(0xFF2D2D2D),
+                            modifier = Modifier.size(35.dp)
+                        )
+                        Text(
+                            text = "New Note",
+                            color = Color(0xFF2D2D2D),
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                }
+            }
+        }
     }
 }
+
 
 
 
