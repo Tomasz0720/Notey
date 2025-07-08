@@ -1,8 +1,8 @@
 package com.example.notey
 
-import App
 import android.os.Build
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -18,6 +18,8 @@ import androidx.appcompat.app.AppCompatActivity // Import AppCompatActivity
 class MainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.S)
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
 
         // Request to draw behind the system bars (status bar and navigation bar).

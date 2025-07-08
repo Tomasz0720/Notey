@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="Notey.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-07-07T20:09:46.910694800Z">
+        <DropdownSelection timestamp="2025-07-08T00:47:02.331245500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\tomas\.android\avd\Pixel_Tablet.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=R52XA0JHYHW" />
             </handle>
           </Target>
         </DropdownSelection>
