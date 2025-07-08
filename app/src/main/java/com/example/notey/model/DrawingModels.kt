@@ -2,14 +2,23 @@
 
 package com.example.notey.utils
 
-import android.graphics.Color // For ARGB values in Stroke
-import android.graphics.PointF // Use PointF for float coordinates
-import com.example.notey.DrawingTool // Ensure DrawingTool is imported
+import android.graphics.PointF
+import com.example.notey.model.DrawingTool
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+
+@Serializable
+data class SerializablePointF(
+    val x: Float,
+    val y: Float
+)
 
 /**
  * Represents a single point captured during a drawing stroke.
  * Includes pressure if available from the stylus.
  */
+
+@Serializable
 data class DrawingPoint(
     val x: Float,
     val y: Float,
@@ -20,16 +29,18 @@ data class DrawingPoint(
  * Represents a single Bezier curve segment.
  * This is crucial for resolution-independent drawing.
  */
+@Serializable
 data class BezierSegment(
-    val start: PointF,      // P0
-    val control1: PointF,   // P1
-    val control2: PointF,   // P2
-    val end: PointF         // P3
+    val start: SerializablePointF,      // P0
+    val control1: SerializablePointF,   // P1
+    val control2: SerializablePointF,   // P2
+    val end: SerializablePointF         // P3
 )
 
 /**
  * Represents a complete drawing stroke, composed of Bezier segments.
  */
+@Serializable
 data class Stroke(
     val id: Long, // Unique ID for undo/redo, saving, etc.
     val segments: List<BezierSegment>,
@@ -37,15 +48,14 @@ data class Stroke(
     val width: Float, // Stroke width in pixels (will be scaled by zoom)
     val tool: DrawingTool, // Add drawing tool to differentiate rendering (e.g., for highlighter)
     val pressurePoints: MutableList<DrawingPoint> // Store raw points with pressure for advanced rendering (optional, but good for refitting)
-) {
-    // Add a helper function to approximate length or bounding box if needed
-}
+)
 
 /**
  * Represents the current drawing state, separating committed (finished) strokes
  * from the single active (being drawn) stroke.
  */
+@Serializable
 data class DrawingState(
     val committedStrokes: List<Stroke>,
-    val activeStroke: Stroke?
+    val activeStroke: Stroke? = null
 )

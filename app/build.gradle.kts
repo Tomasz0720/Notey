@@ -3,7 +3,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
-}
+    kotlin("plugin.serialization") version "1.9.10"}
 
 android {
     namespace = "com.example.notey"
@@ -73,7 +73,9 @@ dependencies {
     implementation("androidx.compose.material3:material3-window-size-class:<latest-version>")
 
     implementation("androidx.compose.material3:material3-window-size-class")
-    implementation("androidx.compose.material3:material3-window-size-class:<latest-version>")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("androidx.compose.material3:material3-window-size-class:1.1.0")
 
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
@@ -81,6 +83,7 @@ dependencies {
     implementation("androidx.test.espresso:espresso-core:3.6.1")
     implementation("androidx.compose.material3:material3-adaptive:1.0.0-alpha05")
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.0.0-alpha02")
+    implementation(libs.androidx.benchmark.macro)
 
 
     testImplementation("junit:junit:4.13.2")

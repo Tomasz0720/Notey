@@ -5,7 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import com.example.notey.ui.folders.FoldersScreen
 import com.example.notey.ui.settings.SettingsScreen
-import com.example.notey.ui.shared.HomeScreen
+import com.example.notey.ui.home.HomeScreen
 import com.example.notey.ui.shared.SharedScreen
 import com.example.notey.ui.trash.TrashScreen
 

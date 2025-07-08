@@ -45,7 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.viewinterop.AndroidView
-import com.example.notey.DrawingTool
+import com.example.notey.model.DrawingTool
 import com.example.notey.R
 import com.example.notey.gl.GLDrawingView
 import com.example.notey.ui.theme.NoteyTheme
@@ -54,6 +54,14 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalLifecycleOwner // NEW IMPORT for lifecycle management
 import androidx.lifecycle.Lifecycle // NEW IMPORT
 import androidx.lifecycle.LifecycleEventObserver // NEW IMPORT
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
+import com.example.notey.data.NoteRepository
+import com.example.notey.gl.GLDrawingView.StrokeFinishedListener
+import com.example.notey.utils.Stroke
+import java.util.UUID
+import kotlin.toString
 
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
@@ -69,6 +77,19 @@ fun WhiteboardScreen() {
     // Make it nullable and initialize it in the factory lambda
     var glDrawingView: GLDrawingView? by remember { mutableStateOf(null) }
 
+    // Add repository for saving strokes
+    val context = LocalContext.current
+    val noteRepository = remember { NoteRepository(context) }
+    val noteId = remember { UUID.randomUUID().toString() }
+    var lastFinishedStroke by remember { mutableStateOf<Stroke?>(null) }
+
+    // Save strokes when they're finalized
+    LaunchedEffect(lastFinishedStroke) {
+        if (lastFinishedStroke != null) {
+            noteRepository.saveStroke(noteId, lastFinishedStroke!!)
+        }
+    }
+
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
             factory = { context ->
@@ -78,6 +99,12 @@ fun WhiteboardScreen() {
                     setStrokeColor(selectedColor)
                     setDrawingTool(selectedTool)
                     setStrokeThickness(selectedThickness)
+
+                    setStrokeFinishedListener(object : GLDrawingView.StrokeFinishedListener {
+                        override fun onStrokeFinished(stroke: Stroke) {
+                            lastFinishedStroke = stroke
+                        }
+                    })
                 }
             },
             update = { view ->

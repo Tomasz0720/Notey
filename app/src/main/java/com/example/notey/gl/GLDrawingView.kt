@@ -11,7 +11,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.Toast
-import com.example.notey.DrawingTool
+import com.example.notey.model.DrawingTool
 import com.example.notey.utils.BezierCurveFitter
 import com.example.notey.utils.BezierSegment
 import com.example.notey.utils.DrawingPoint
@@ -19,6 +19,7 @@ import com.example.notey.utils.DrawingState
 import com.example.notey.utils.DrawingUtils
 import com.example.notey.utils.Stroke
 import java.util.UUID
+import com.example.notey.utils.SerializablePointF
 
 // EGL imports for advanced configuration
 import javax.microedition.khronos.egl.EGL10
@@ -263,8 +264,7 @@ class GLDrawingView @JvmOverloads constructor(
                         color = currentColor,
                         width = currentThickness,
                         tool = currentTool, // Include the current tool
-                        pressurePoints = mutableListOf(newDrawingPoint) // Start with the first point
-                    )
+                        pressurePoints = mutableListOf(newDrawingPoint)                    )
 
                     // Update the renderer's drawing state with the new active stroke
                     // This is queued to run on the GL thread.
@@ -300,6 +300,9 @@ class GLDrawingView @JvmOverloads constructor(
                         val committedChunk = currentActiveStroke!!.copy(segments = chunkSegments)
                         finishedStrokes.add(committedChunk)
 
+                        // Notify the listener that a stroke has finished
+                        strokeFinishedListener?.onStrokeFinished(committedChunk)
+
                         // Queue VBO preparation for the finalized chunk on the GL thread
                         queueEvent {
                             strokeBufferManager.prepareStrokeForRendering(committedChunk)
@@ -324,7 +327,7 @@ class GLDrawingView @JvmOverloads constructor(
                             color = currentColor,
                             width = currentThickness,
                             tool = currentTool,
-                            pressurePoints = continuityPoints // Start new stroke with continuity points
+                            pressurePoints = mutableListOf(newDrawingPoint) // Start new stroke with continuity points
                         )
                         // Note: bezierCurveFitter doesn't need to be reset and re-added points.
                         // It always gets the 'currentRawPoints.toList()' for fitting.
@@ -369,12 +372,12 @@ class GLDrawingView @JvmOverloads constructor(
                         bezierCurveFitter.fitAndGetBezierCurves(currentRawPoints.toList())
                     } else {
                         // Handle single-point tap: create a tiny stroke (a dot)
-                        listOf(
+                        mutableListOf(
                             BezierSegment(
-                                start = worldPoint,
-                                control1 = worldPoint,
-                                control2 = worldPoint,
-                                end = worldPoint
+                                start = SerializablePointF(worldPoint.x, worldPoint.y),
+                                control1 = SerializablePointF(worldPoint.x, worldPoint.y),
+                                control2 = SerializablePointF(worldPoint.x, worldPoint.y),
+                                end = SerializablePointF(worldPoint.x, worldPoint.y)
                             )
                         )
                     }
@@ -382,6 +385,10 @@ class GLDrawingView @JvmOverloads constructor(
                     if (currentActiveStroke != null) {
                         val finalStroke = currentActiveStroke!!.copy(segments = finalSegments)
                         finishedStrokes.add(finalStroke) // Add to the list of finished strokes
+
+                        // Notify the listener that a stroke has finished
+                        strokeFinishedListener?.onStrokeFinished(finalStroke)
+
                         // Prepare the VBO for the newly committed final chunk ONCE here.
                         queueEvent {
                             strokeBufferManager.prepareStrokeForRendering(finalStroke)
@@ -408,5 +415,14 @@ class GLDrawingView @JvmOverloads constructor(
 
             return true // Indicate that the event was consumed
         }
+    }
+    interface StrokeFinishedListener {
+        fun onStrokeFinished(stroke: Stroke)
+    }
+
+    private var strokeFinishedListener: StrokeFinishedListener? = null
+
+    fun setStrokeFinishedListener(listener: StrokeFinishedListener) {
+        strokeFinishedListener = listener
     }
 }

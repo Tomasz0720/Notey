@@ -25,7 +25,7 @@ import com.example.notey.ui.components.Sidebar
 
 @Composable
 fun ResponsiveLayout(windowSizeClass: WindowSizeClass) {
-    var selectedTab by remember { mutableStateOf(0) }
+    var selectedTab by remember { mutableStateOf(1) }
 
     if (windowSizeClass.widthSizeClass >= WindowWidthSizeClass.Medium) {
         // Tablet/Desktop Layout

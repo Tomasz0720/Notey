@@ -5,7 +5,7 @@ package com.example.notey.gl
 import android.graphics.PointF
 import android.opengl.GLES20
 import android.util.Log
-import com.example.notey.DrawingTool
+import com.example.notey.model.DrawingTool
 import com.example.notey.utils.BezierSegment
 import com.example.notey.utils.DrawingPoint
 import com.example.notey.utils.Stroke
@@ -264,7 +264,10 @@ class StrokeBufferManager {
                     // If not at the end of the current segment, use the next sampled point
                     i < BEZIER_RESOLUTION -> calculateBezierPoint(segment, (i + 1).toFloat() / BEZIER_RESOLUTION)
                     // If at the end of current segment but not the last segment overall, use start of next segment
-                    segmentIndex < stroke.segments.size - 1 -> stroke.segments[segmentIndex + 1].start
+                    segmentIndex < stroke.segments.size - 1 -> {
+                        val nextStart = stroke.segments[segmentIndex + 1].start
+                        PointF(nextStart.x, nextStart.y)  // Convert SerializablePointF to PointF
+                    }
                     // If at the very end of the last segment, use the current point itself (degenerate tangent)
                     else -> currentPoint
                 }
@@ -322,19 +325,17 @@ class StrokeBufferManager {
         // Only add caps if there are enough points to define a clear direction
         if (stroke.segments.isNotEmpty()) {
             // Start Cap
-            val firstPoint = stroke.segments.first().start
-            val firstSampledPoint = calculateBezierPoint(stroke.segments.first(), 0.01f) // Point slightly along the first segment
-            // The direction *from* the first point *to* the sampled point defines the stroke's initial direction.
-            // The cap should face the opposite way (i.e., this vector points from the cap's center into the stroke body).
+            val firstSegment = stroke.segments.first()
+            val firstPoint = PointF(firstSegment.start.x, firstSegment.start.y) // Convert to PointF
+            val firstSampledPoint = calculateBezierPoint(stroke.segments.first(), 0.01f)
             val capDirectionX_start = firstPoint.x - firstSampledPoint.x
             val capDirectionY_start = firstPoint.y - firstSampledPoint.y
             addCapVertices(vertices, firstPoint, halfWidth, capDirectionX_start, capDirectionY_start)
 
             // End Cap
-            val lastPoint = stroke.segments.last().end
-            val lastSampledPoint = calculateBezierPoint(stroke.segments.last(), 0.99f) // Point slightly before the last point
-            // The direction *from* the sampled point *to* the last point defines the stroke's final direction.
-            // The cap should face this way (i.e., this vector points from the cap's center into the stroke body).
+            val lastSegment = stroke.segments.last()
+            val lastPoint = PointF(lastSegment.end.x, lastSegment.end.y) // Convert to PointF
+            val lastSampledPoint = calculateBezierPoint(stroke.segments.last(), 0.99f)
             val capDirectionX_end = lastPoint.x - lastSampledPoint.x
             val capDirectionY_end = lastPoint.y - lastSampledPoint.y
             addCapVertices(vertices, lastPoint, halfWidth, capDirectionX_end, capDirectionY_end)

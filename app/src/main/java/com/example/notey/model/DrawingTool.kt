@@ -1,6 +1,8 @@
-// File: DrawingTool.kt
-package com.example.notey
+package com.example.notey.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class DrawingTool {
     PEN,
     HIGHLIGHTER,
