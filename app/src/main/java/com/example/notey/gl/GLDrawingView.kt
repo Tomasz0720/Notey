@@ -10,8 +10,7 @@ import android.opengl.GLSurfaceView
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
-import android.widget.Toast
-import com.example.notey.model.DrawingTool
+import com.example.notey.drawingmodel.DrawingTool
 import com.example.notey.utils.BezierCurveFitter
 import com.example.notey.utils.BezierSegment
 import com.example.notey.utils.DrawingPoint
@@ -25,7 +24,6 @@ import com.example.notey.utils.SerializablePointF
 import javax.microedition.khronos.egl.EGL10
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.egl.EGLDisplay
-import javax.microedition.khronos.opengles.GL10
 
 class GLDrawingView @JvmOverloads constructor(
     context: Context,

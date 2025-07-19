@@ -1,4 +1,4 @@
-package com.example.notey.model
+package com.example.notey.drawingmodel
 
 import kotlinx.serialization.Serializable
 

@@ -17,7 +17,6 @@ import javax.microedition.khronos.opengles.GL10
  */
 class DrawingRenderer(private val strokeBufferManager: StrokeBufferManager) : GLSurfaceView.Renderer {
     private val TAG = "DrawingRenderer"
-
     companion object {
         // Vertex shader remains the same for basic position transformation
         private const val vertexShaderCode = """

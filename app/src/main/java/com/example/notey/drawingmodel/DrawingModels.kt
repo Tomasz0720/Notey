@@ -2,10 +2,8 @@
 
 package com.example.notey.utils
 
-import android.graphics.PointF
-import com.example.notey.model.DrawingTool
+import com.example.notey.drawingmodel.DrawingTool
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 @Serializable
 data class SerializablePointF(

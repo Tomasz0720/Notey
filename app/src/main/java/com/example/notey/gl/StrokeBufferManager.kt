@@ -5,7 +5,7 @@ package com.example.notey.gl
 import android.graphics.PointF
 import android.opengl.GLES20
 import android.util.Log
-import com.example.notey.model.DrawingTool
+import com.example.notey.drawingmodel.DrawingTool
 import com.example.notey.utils.BezierSegment
 import com.example.notey.utils.DrawingPoint
 import com.example.notey.utils.Stroke

@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.asComposeRenderEffect
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,7 +44,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.viewinterop.AndroidView
-import com.example.notey.model.DrawingTool
+import com.example.notey.drawingmodel.DrawingTool
 import com.example.notey.R
 import com.example.notey.gl.GLDrawingView
 import com.example.notey.ui.theme.NoteyTheme
@@ -55,13 +54,10 @@ import androidx.compose.ui.platform.LocalLifecycleOwner // NEW IMPORT for lifecy
 import androidx.lifecycle.Lifecycle // NEW IMPORT
 import androidx.lifecycle.LifecycleEventObserver // NEW IMPORT
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
-import com.example.notey.data.NoteRepository
-import com.example.notey.gl.GLDrawingView.StrokeFinishedListener
+import com.example.notey.data.repository.NoteRepository
 import com.example.notey.utils.Stroke
 import java.util.UUID
-import kotlin.toString
 
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable

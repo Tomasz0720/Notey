@@ -26,8 +26,8 @@ fun SearchBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(55.dp)
-            .clip(RoundedCornerShape(25.dp))
+            .height(50.dp)
+            .clip(RoundedCornerShape(50.dp))
             .background(Color(0xFFEDEDED))
             .padding(horizontal = 20.dp),
         contentAlignment = Alignment.CenterStart
@@ -37,7 +37,7 @@ fun SearchBar(
                 painter = painterResource(id = R.drawable.find),
                 contentDescription = "Search icon",
                 tint = Color(0xFF2D2D2D),
-                modifier = Modifier.size(35.dp)
+                modifier = Modifier.size(24.dp)
             )
 
             Spacer(modifier = Modifier.width(20.dp))
@@ -48,7 +48,7 @@ fun SearchBar(
                 singleLine = true,
                 textStyle = MaterialTheme.typography.bodyLarge.copy(
                     color = Color(0xFF2D2D2D),
-                    fontSize = 18.sp
+                    fontSize = 15.sp
                 ),
                 modifier = Modifier.weight(1f).padding(end = 12.dp),
                 decorationBox = { innerTextField ->
@@ -57,7 +57,7 @@ fun SearchBar(
                             Text(
                                 text = "Search Notes",
                                 color = Color(0xFF2D2D2D),
-                                fontSize = 18.sp,
+                                fontSize = 15.sp,
                             )
                         }
                         innerTextField()

@@ -1,8 +1,11 @@
+import org.gradle.kotlin.dsl.implementation
+
 // File: app/build.gradle.kts
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
+    id("kotlin-kapt")
     kotlin("plugin.serialization") version "1.9.10"}
 
 android {
@@ -56,7 +59,14 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
-    implementation(platform("androidx.compose:compose-bom:2024.02.00")) // KEEP THIS BOM
+    implementation(platform("androidx.compose:compose-bom:2024.02.00"))
+    implementation(libs.androidx.adapters) // KEEP THIS BOM
+
+    val roomVersion = "2.6.1"
+
+    implementation("androidx.room:room-runtime:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
 
     // These are managed by the BOM now
     implementation("androidx.compose.ui:ui")

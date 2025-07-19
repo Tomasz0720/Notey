@@ -32,8 +32,8 @@ class MainActivity : AppCompatActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     // Directly call the WhiteboardScreen Composable
-                    //App()
-                    WhiteboardScreen()
+                    App()
+                    //WhiteboardScreen()
                 }
             }
         }
